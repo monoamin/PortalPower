@@ -12,64 +12,65 @@ import net.lavabucket.hourglass.config.HourglassConfig;
 @Mod.EventBusSubscriber(modid = DayLight.MODID)
 public class DayLightEvents {
     private static MinecraftServer server;
+
     @SubscribeEvent
     public static void onServerStarting(ServerStartingEvent event) {
         server = event.getServer();
     }
+
     @SubscribeEvent
     public static void onSeasonChanged(SeasonChangedEvent<?> e) {
         Object subSeason = e.getNewSeason();
         if (subSeason instanceof Season.SubSeason) {
-            int s = ((Season.SubSeason)subSeason).ordinal();
+            int s = ((Season.SubSeason) subSeason).ordinal();
             if (DayLight.DEBUG)
-                LogManager.getLogger().debug("####DAYLIGHT####:  Season changed to " + s);
-            double dayFactor = 1.0;
-            double nightFactor = 1.0;
-
-            switch (s){
-                case 0:
-                    dayFactor = DayLightConfig.ratioEarlySpring.get();
-                    nightFactor = 2-DayLightConfig.ratioEarlySpring.get();
-                case 1:
-                    dayFactor = DayLightConfig.ratioMidSpring.get();
-                    nightFactor = 2-DayLightConfig.ratioMidSpring.get();
-                case 2:
-                    dayFactor = DayLightConfig.ratioLateSpring.get();
-                    nightFactor = 2-DayLightConfig.ratioLateSpring.get();
-                case 3:
-                    dayFactor = DayLightConfig.ratioEarlySummer.get();
-                    nightFactor = 2-DayLightConfig.ratioEarlySummer.get();
-                case 4:
-                    dayFactor = DayLightConfig.ratioMidSummer.get();
-                    nightFactor = 2-DayLightConfig.ratioMidSummer.get();
-                case 5:
-                    dayFactor = DayLightConfig.ratioLateSummer.get();
-                    nightFactor = 2-DayLightConfig.ratioLateSummer.get();
-                case 6:
-                    dayFactor = DayLightConfig.ratioEarlyFall.get();
-                    nightFactor = 2-DayLightConfig.ratioEarlyFall.get();
-                case 7:
-                    dayFactor = DayLightConfig.ratioMidFall.get();
-                    nightFactor = 2-DayLightConfig.ratioMidFall.get();
-                case 8:
-                    dayFactor = DayLightConfig.ratioLateFall.get();
-                    nightFactor = 2-DayLightConfig.ratioLateFall.get();
-                case 9:
-                    dayFactor = DayLightConfig.ratioEarlyWinter.get();
-                    nightFactor = 2-DayLightConfig.ratioEarlyWinter.get();
-                case 10:
-                    dayFactor = DayLightConfig.ratioMidWinter.get();
-                    nightFactor = 2-DayLightConfig.ratioMidWinter.get();
-                case 11:
-                    dayFactor = DayLightConfig.ratioLateWinter.get();
-                    nightFactor = 2-DayLightConfig.ratioLateWinter.get();
-            }
-            double overallScaling = DayLightConfig.overallScaling.get();
-            if (s == 0) setDayNightSpeed(dayFactor * overallScaling, nightFactor * overallScaling);
+                LogManager.getLogger().debug("####DAYLIGHT####:  Season changed to {}", s);
+            double r = getDayNightRatio(DayLightConfig.latitude.get(), s);
+            setDayNightSpeed(0+r,2-r);
         }
     }
+
     private static void setDayNightSpeed(double dayFactor, double nightFactor) {
         HourglassConfig.SERVER_CONFIG.daySpeed.set(dayFactor);
         HourglassConfig.SERVER_CONFIG.nightSpeed.set(nightFactor);
+    }
+
+    private static double toRadians(double degrees) {
+        return degrees * Math.PI / 180.0;
+    }
+
+    // Function to calculate day/night length ratio based on latitude and month
+    public static double getDayNightRatio(double latitude, int month) {
+        // Ensure month is within valid range (0 to 11)
+        if (month < 0) month = 0;
+        if (month > 11) month = 11;
+
+        // Convert latitude and Earth's tilt to radians
+        double latRadians = toRadians(DayLightConfig.latitude.get());
+        double tiltRadians = toRadians(DayLightConfig.axialTilt.get());
+
+        // Approximate the solar declination angle based on the month
+        // Month 0 (early spring) corresponds to the spring equinox, declination of 0.
+        double hourAngle = getHourAngle(month, tiltRadians, latRadians);
+        double daylightHours = 24.0 * (hourAngle / Math.PI);
+
+        // Return the ratio of daylight to night hours
+        double nightHours = 24.0 - daylightHours;
+        return daylightHours / nightHours;
+    }
+
+    private static double getHourAngle(int month, double tiltRadians, double latRadians) {
+        double dayOfYear = month * (365 / 12.0); // Roughly map month to day of the year
+        double solarDeclination = tiltRadians * Math.sin(2 * Math.PI * (dayOfYear - 80) / 365);
+
+        // Calculate the cosine of the hour angle for sunrise/sunset
+        double cosHourAngle = -Math.tan(latRadians) * Math.tan(solarDeclination);
+
+        // Limit cosHourAngle to [-1, 1] to avoid domain errors in acos
+        cosHourAngle = Math.max(-1, Math.min(1, cosHourAngle));
+
+        // Calculate the hour angle (in radians) and convert to hours of daylight
+        double hourAngle = Math.acos(cosHourAngle);
+        return hourAngle;
     }
 }
