@@ -8,6 +8,7 @@ public class DayLightConfig {
 
     public static ForgeConfigSpec.DoubleValue latitude;
     public static ForgeConfigSpec.DoubleValue axialTilt;
+    public static ForgeConfigSpec.DoubleValue duration_factor;
 
 
     static {
@@ -17,6 +18,8 @@ public class DayLightConfig {
                 .defineInRange("latitude", 45d, -80d, 80d);
         axialTilt = COMMON_BUILDER.comment("axialTilt")
                 .defineInRange("axial_tilt", 23d, 0d, 45d);
+        duration_factor = COMMON_BUILDER.comment("cycle_length")
+                .defineInRange("duration_factor", 0.25d, 0.2d, 5d);
 
         COMMON_BUILDER.pop();
         COMMON_CONFIG = COMMON_BUILDER.build();

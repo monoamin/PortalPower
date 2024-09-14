@@ -10,7 +10,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @Mod(DayLight.MODID)
 public class DayLight {
     public static final String MODID = "daylight";
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     public DayLight() {
         MinecraftForge.EVENT_BUS.register(this);
