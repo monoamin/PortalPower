@@ -10,23 +10,11 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @Mod(DayLight.MODID)
 public class DayLight {
     public static final String MODID = "daylight";
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
 
     public DayLight() {
+        DayLightConfig.register();
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(DayLightEvents.class);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onLoad);
-    }
-
-    private void setup(final FMLCommonSetupEvent event) {
-        net.minecraftforge.common.ForgeConfigSpec commonSpec = DayLightConfig.COMMON_CONFIG;
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, commonSpec);
-    }
-
-    private void onLoad(final ModConfigEvent event) {
-        if (event.getConfig().getSpec() == DayLightConfig.COMMON_CONFIG) {
-            // React to changes or reload options if necessary
-        }
     }
 }
