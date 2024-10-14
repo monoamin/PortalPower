@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "portalpower:block/portal_controller" }
+  }
+}

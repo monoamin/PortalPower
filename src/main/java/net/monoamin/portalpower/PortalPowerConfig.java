@@ -1,10 +1,10 @@
-package net.monoamin.daylight;
+package net.monoamin.portalpower;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 
-public class DayLightConfig {
+public class PortalPowerConfig {
     public static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
     public static final ForgeConfigSpec COMMON_CONFIG;
 
