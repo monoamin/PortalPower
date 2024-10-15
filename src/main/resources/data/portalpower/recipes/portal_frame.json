@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "OAO",
+    "AAA",
+    "OAO"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "I": {
+      "item": "minecraft:obsidian_block"
+    }
+  },
+  "result": {
+    "item": "portalpower:resonator_core",
+    "count": 4
+  }
+}

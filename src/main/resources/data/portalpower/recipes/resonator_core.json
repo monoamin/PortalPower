@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ORO",
+    "RER",
+    "ORO"
+  ],
+  "key": {
+    "O": {
+      "item": "minecraft:obsidian_block"
+    },
+    "E": {
+      "item": "minecraft:ender_pearl"
+    },
+    "R": {
+      "item": "minecraft:redstone_dust"
+    }
+  },
+  "result": {
+    "item": "portalpower:resonator_core",
+    "count": 1
+  }
+}

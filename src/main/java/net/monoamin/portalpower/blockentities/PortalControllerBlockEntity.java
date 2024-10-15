@@ -121,22 +121,22 @@ public class PortalControllerBlockEntity extends BlockEntity implements MenuProv
     @Override
     public void saveAdditional(CompoundTag pTag) {
         super.saveAdditional(pTag);
-        pTag.putBoolean("block.portalpower.portal_controller_block.ison", isOn);
-        pTag.put("block.portalpower.portal_controller_block.inventory", itemHandler.serializeNBT());
-        pTag.putInt("block.portalpower.portal_controller_block.energystored", energyStorage.getEnergyStored());
-        pTag.putInt("block.portalpower.portal_controller_block.maxenergystored", energyStorage.getMaxEnergyStored());
+        pTag.putBoolean("block.portalpower.resonator_core_block.ison", isOn);
+        pTag.put("block.portalpower.resonator_core_block.inventory", itemHandler.serializeNBT());
+        pTag.putInt("block.portalpower.resonator_core_block.energystored", energyStorage.getEnergyStored());
+        pTag.putInt("block.portalpower.resonator_core_block.maxenergystored", energyStorage.getMaxEnergyStored());
     }
 
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
-        this.isOn = tag.getBoolean("block.portalpower.portal_controller_block.ison");
+        this.isOn = tag.getBoolean("block.portalpower.resonator_core_block.ison");
         // Deserialize the inventory
-        if (tag.contains("block.portalpower.portal_controller_block.inventory", Tag.TAG_COMPOUND)) {
-            itemHandler.deserializeNBT(tag.getCompound("block.portalpower.portal_controller_block.inventory"));
+        if (tag.contains("block.portalpower.resonator_core_block.inventory", Tag.TAG_COMPOUND)) {
+            itemHandler.deserializeNBT(tag.getCompound("block.portalpower.resonator_core_block.inventory"));
         }
-        this.displayEnergyLevel = tag.getInt("block.portalpower.portal_controller_block.energystored");
-        this.displayMaxEnergyLevel = tag.getInt("block.portalpower.portal_controller_block.maxenergystored");
+        this.displayEnergyLevel = tag.getInt("block.portalpower.resonator_core_block.energystored");
+        this.displayMaxEnergyLevel = tag.getInt("block.portalpower.resonator_core_block.maxenergystored");
     }
 
     @Override
@@ -160,34 +160,31 @@ public class PortalControllerBlockEntity extends BlockEntity implements MenuProv
         return new PortalControllerMenu(id, playerInventory, this, this.data);
     }
 
-    public void fillContainerData(ContainerData data) {
-        data.set(0, this.isOn ? 1 : 0); // Sync the on/off state
-    }
-
     public static void tick(Level level, BlockPos pos, BlockState state, PortalControllerBlockEntity blockEntity) {
         if (level == null || level.isClientSide()) {
             return;
         }
         blockEntity.displayEnergyLevel = blockEntity.energyStorage.getEnergyStored();
         blockEntity.displayMaxEnergyLevel = blockEntity.energyStorage.getMaxEnergyStored();
+        blockEntity.energyStorage.extractEnergy(10,false);
 
-        /*
+        // Every 1 seconds
         if (ticks == 20) {
 
             // Calculate required energy based on portal frame
             int requiredEnergy = blockEntity.calculateRequiredEnergy();
 
-            if (blockEntity.energyStorage.getEnergyStored() >= requiredEnergy && !blockEntity.portalActivated) {
+            if (blockEntity.energyStorage.getEnergyStored() >= requiredEnergy && !blockEntity.isOn) {
                 blockEntity.activatePortal();
                 blockEntity.energyStorage.extractEnergy(requiredEnergy, false);
-                blockEntity.portalActivated = true;
+                blockEntity.isOn = true;
                 blockEntity.setChanged(); // Notify the game that the block state has changed
-            } else if (blockEntity.portalActivated) {
+            } else if (blockEntity.isOn) {
                 // Re-validate the portal frame in case it was altered
                 PortalFrameInfo frameInfo = blockEntity.scanPortalFrame();
                 if (frameInfo == null || blockEntity.energyStorage.getEnergyStored() < requiredEnergy) {
                     blockEntity.deactivatePortal();
-                    blockEntity.portalActivated = false;
+                    blockEntity.isOn = false;
                     blockEntity.setChanged(); // Notify the game that the block state has changed
                 }
             }
@@ -196,7 +193,6 @@ public class PortalControllerBlockEntity extends BlockEntity implements MenuProv
         else {
             ticks++;
         }
-         */
     }
 
     private void activatePortal() {
@@ -396,6 +392,10 @@ public class PortalControllerBlockEntity extends BlockEntity implements MenuProv
 
     public int getMaxEnergyStored(){
         return energyStorage.getMaxEnergyStored();
+    }
+
+    public void setEnergyStored(int value){
+
     }
 
     // Helper class to store portal frame information

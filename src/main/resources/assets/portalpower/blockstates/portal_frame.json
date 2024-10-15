@@ -1,5 +1,10 @@
 {
   "variants": {
-    "": { "model": "portalpower:block/portal_frame" }
+    "": {
+      "model": "portalpower:block/portal_frame"
+    },
+    "inventory": {
+      "model": "portalpower:block/portal_frame"
+    }
   }
 }

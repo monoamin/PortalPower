@@ -154,6 +154,10 @@ repositories {
     //     dir 'libs'
     // }
     maven {
+        name = 'ParchmentMC'
+        url = 'https://maven.parchmentmc.org'
+    }
+    maven {
         name = "Modrinth"
         url = "https://api.modrinth.com/maven"
     }
@@ -166,8 +170,7 @@ dependencies {
     // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-//    implementation fg.deobf("maven.modrinth:hourglass:1.2.1.1")
-//    implementation fg.deobf("maven.modrinth:serene-seasons:9.0.0.46")
+    compileOnly 'org.parchmentmc.data:parchment-1.20.1:2023.09.03@zip'
     //implementation fg.deobf("maven.modrinth:cloth-config:11.1.118+forge")
     implementation fg.deobf("maven.modrinth:mekanism-generators:10.4.7.42")
     implementation fg.deobf("maven.modrinth:mekanism:10.4.7.42")

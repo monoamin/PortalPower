@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "": {
+      "model": "portalpower:block/laser_emitter"
+    },
+    "inventory": {
+      "model": "portalpower:block/laser_emitter"
+    }
+  }
+}

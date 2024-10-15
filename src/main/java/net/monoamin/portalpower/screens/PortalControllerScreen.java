@@ -12,7 +12,8 @@ import net.monoamin.portalpower.menus.PortalControllerMenu;
 
 
 public class PortalControllerScreen extends AbstractContainerScreen<PortalControllerMenu> {
-    private static final ResourceLocation GUI_TEXTURE = new ResourceLocation("portalpower", "textures/gui/portal_controller_gui.png");
+    private static final ResourceLocation GUI_TEXTURE = new ResourceLocation("portalpower", "textures/gui/resonator_core_gui.png");
+    private final int labelX = 30, labelY = 30;
     private Button toggleButton;
 
     public PortalControllerScreen(PortalControllerMenu menu, Inventory inv, Component title) {
@@ -47,7 +48,7 @@ public class PortalControllerScreen extends AbstractContainerScreen<PortalContro
 
         // Assume we have some Component 'label'
         // 'label' is drawn at 'labelX' and 'labelY'
-        //graphics.drawString(this.font, this.label, this.labelX, this.labelY, 0x404040);
+        graphics.drawString(this.font, String.valueOf(this.menu.getScaledEnergyLevel()), this.labelX, this.labelY, 0x404040);
     }
 
     @Override

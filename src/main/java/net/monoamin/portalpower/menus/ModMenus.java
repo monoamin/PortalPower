@@ -10,7 +10,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class ModMenus {
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, "portalpower");
 
-    public static final RegistryObject<MenuType<PortalControllerMenu>> PORTAL_CONTROLLER_MENU = MENUS.register("portal_controller_menu",
+    public static final RegistryObject<MenuType<PortalControllerMenu>> PORTAL_CONTROLLER_MENU = MENUS.register("resonator_core_menu",
             () -> IForgeMenuType.create((windowId, inv, data) -> new PortalControllerMenu(windowId, inv, data))
     );
     public static void register(IEventBus eventBus) {

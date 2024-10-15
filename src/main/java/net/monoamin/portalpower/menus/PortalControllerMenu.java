@@ -14,21 +14,24 @@ import net.monoamin.portalpower.blockentities.PortalControllerBlockEntity;
 
 public class PortalControllerMenu extends AbstractContainerMenu {
     public final BlockEntity blockEntity;
+    private final int CUR_ENERGY = 0;
+    private final int MAX_ENERGY = 1;
+    private final int IS_ON = 2;
     private final ContainerData data = new ContainerData() {
         @Override
         public int get(int index) {
             switch (index) {
-                case 0: return ((PortalControllerBlockEntity)blockEntity).getEnergyStored();
-                case 1: return ((PortalControllerBlockEntity)blockEntity).getMaxEnergyStored();
-                default: return 0;
+                case CUR_ENERGY: return ((PortalControllerBlockEntity)blockEntity).getEnergyStored();
+                case MAX_ENERGY: return ((PortalControllerBlockEntity)blockEntity).getMaxEnergyStored();
+                default: return CUR_ENERGY;
             }
         }
 
         @Override
         public void set(int index, int value) {
             // This should only be called on the client
-            if (index == 0) ((PortalControllerBlockEntity)blockEntity).displayEnergyLevel = value;
-            if (index == 1) ((PortalControllerBlockEntity)blockEntity).displayMaxEnergyLevel = value;
+            if (index == CUR_ENERGY) ((PortalControllerBlockEntity)blockEntity).displayEnergyLevel = value;
+            if (index == MAX_ENERGY) ((PortalControllerBlockEntity)blockEntity).displayMaxEnergyLevel = value;
         }
 
         @Override
@@ -37,6 +40,7 @@ public class PortalControllerMenu extends AbstractContainerMenu {
         }
     };
     private final Level level;
+
 
     // Constructor for use on the server (using BlockEntity)
     public PortalControllerMenu(int id, Inventory playerInventory, BlockEntity blockEntity, ContainerData data) {
@@ -53,18 +57,17 @@ public class PortalControllerMenu extends AbstractContainerMenu {
         });
 
         this.addDataSlots(this.data);
-    }
+        this.addDataSlot(new DataSlot() {
+            @Override
+            public int get() {
+                return ((PortalControllerBlockEntity)blockEntity).displayEnergyLevel;
+            }
 
-    public boolean isCrafting() {
-        return data.get(0) > 0;
-    }
-
-    public int getScaledEnergyLevel() {
-        int progress = this.data.get(0);
-        int maxProgress = this.data.get(1);  // Max Progress
-        int progressArrowSize = 26; // This is the height in pixels of your arrow
-
-        return maxProgress != 0 && progress != 0 ? progress * progressArrowSize / maxProgress : 0;
+            @Override
+            public void set(int value) {
+                ((PortalControllerBlockEntity)blockEntity).displayEnergyLevel = value;
+            }
+        });
     }
 
     // Constructor for use on the client (using FriendlyByteBuf)
@@ -73,7 +76,7 @@ public class PortalControllerMenu extends AbstractContainerMenu {
     }
 
     public boolean isOn() {
-        return this.data.get(0) == 1; // Check if the synced data shows the block is on
+        return this.data.get(CUR_ENERGY) == 1; // Check if the synced data shows the block is on
     }
 
     // CREDIT GOES TO: diesieben07 | https://github.com/diesieben07/SevenCommons
@@ -145,5 +148,33 @@ public class PortalControllerMenu extends AbstractContainerMenu {
         for (int i = 0; i < 9; ++i) {
             this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 142));
         }
+    }
+
+    @Override
+    public void broadcastChanges(){
+        super.broadcastChanges();
+        this.setDataSlot(new DataSlot()
+        {
+            @Override
+            public int get() {
+                return ((PortalControllerBlockEntity)blockEntity).getEnergyStored();
+            }
+
+            @Override
+            public void set(int p_39402_) {
+                ((PortalControllerBlockEntity)blockEntity).setEnergyStored(p_39402_);
+            }
+        });
+    }
+
+    private void setDataSlot(DataSlot dataSlot) {
+    }
+
+    public int getScaledEnergyLevel() {
+        int progress = this.data.get(CUR_ENERGY);
+        int maxProgress = this.data.get(MAX_ENERGY);  // Max Progress
+        int progressArrowSize = 26; // This is the height in pixels of your arrow
+
+        return maxProgress != 0 && progress != 0 ? progress * progressArrowSize / maxProgress : 0;
     }
 }

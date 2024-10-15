@@ -2,8 +2,8 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [64, 64],
 	"textures": {
-		"0": "portalpower:block/portal_controller_diffuse",
-		"particle": "portalpower:block/portal_controller_diffuse"
+		"0": "portalpower:block/resonator_core_diffuse",
+		"particle": "portalpower:block/resonator_core_diffuse"
 	},
 	"elements": [
 		{

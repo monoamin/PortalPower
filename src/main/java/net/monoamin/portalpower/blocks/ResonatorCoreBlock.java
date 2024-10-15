@@ -7,11 +7,10 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.monoamin.portalpower.blockentities.LaserEmitterBlockEntity;
-import net.monoamin.portalpower.blockentities.PortalFrameBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
-public class PortalFrameBlock extends Block implements EntityBlock {
-    public PortalFrameBlock() {
+public class ResonatorCoreBlock extends Block implements EntityBlock {
+    public ResonatorCoreBlock() {
         super(Properties.of()
                 .strength(5.0f, 6.0f)
                 .sound(SoundType.METAL)
@@ -21,6 +20,6 @@ public class PortalFrameBlock extends Block implements EntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new PortalFrameBlockEntity(pos,state);
+        return new LaserEmitterBlockEntity(pos,state);
     }
 }

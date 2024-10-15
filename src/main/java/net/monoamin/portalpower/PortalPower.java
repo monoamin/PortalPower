@@ -33,10 +33,10 @@ public class PortalPower {
 /*
     // Register Blocks
     public static final RegistryObject<Block> LASER_BLOCK = BLOCKS.register("laser_block",
-            () -> new LaserEmitterBlock(BlockBehaviour.Properties.of().strength(1.0f).requiresCorrectToolForDrops().sound(SoundType.METAL)));
+            () -> new ResonatorCoreBlock(BlockBehaviour.Properties.of().strength(1.0f).requiresCorrectToolForDrops().sound(SoundType.METAL)));
     public static final RegistryObject<Block> PORTAL_FRAME_BLOCK = BLOCKS.register("portal_frame",
             () -> new PortalFrameBlock(BlockBehaviour.Properties.of().strength(1.0f).requiresCorrectToolForDrops().sound(SoundType.AMETHYST)));
-    public static final RegistryObject<Block> PORTAL_CONTROLLER_BLOCK = BLOCKS.register("portal_controller",
+    public static final RegistryObject<Block> PORTAL_CONTROLLER_BLOCK = BLOCKS.register("resonator_core",
             () -> new PortalControllerBlock(BlockBehaviour.Properties.of().strength(1.0f).requiresCorrectToolForDrops().sound(SoundType.AMETHYST)));
 
     // Register Items
@@ -44,7 +44,7 @@ public class PortalPower {
             () -> new BlockItem(LASER_BLOCK.get(), new Item.Properties()));
     public static final RegistryObject<Item> PORTAL_FRAME_ITEM = ITEMS.register("portal_frame",
             () -> new BlockItem(PORTAL_FRAME_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> PORTAL_CONTROLLER_ITEM = ITEMS.register("portal_controller",
+    public static final RegistryObject<Item> PORTAL_CONTROLLER_ITEM = ITEMS.register("resonator_core",
             () -> new BlockItem(PORTAL_CONTROLLER_BLOCK.get(), new Item.Properties()));
 
 */
@@ -57,6 +57,7 @@ public class PortalPower {
                         // Add the block to the tab
                         output.accept(ModItems.PORTAL_FRAME_ITEM.get());
                         output.accept(ModItems.PORTAL_CONTROLLER_ITEM.get());
+                        output.accept(ModItems.LASER_EMITTER_ITEM.get());
                     })
                     .build()
     );

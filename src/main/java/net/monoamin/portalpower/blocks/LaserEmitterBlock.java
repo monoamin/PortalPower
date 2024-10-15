@@ -10,8 +10,8 @@ import net.monoamin.portalpower.blockentities.LaserEmitterBlockEntity;
 import net.monoamin.portalpower.blockentities.PortalFrameBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
-public class PortalFrameBlock extends Block implements EntityBlock {
-    public PortalFrameBlock() {
+public class LaserEmitterBlock extends Block implements EntityBlock {
+    public LaserEmitterBlock() {
         super(Properties.of()
                 .strength(5.0f, 6.0f)
                 .sound(SoundType.METAL)
@@ -21,6 +21,6 @@ public class PortalFrameBlock extends Block implements EntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new PortalFrameBlockEntity(pos,state);
+        return new LaserEmitterBlockEntity(pos,state);
     }
 }

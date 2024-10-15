@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "": {
+      "model": "portalpower:block/resonator_core"
+    },
+    "inventory": {
+      "model": "portalpower:block/resonator_core"
+    }
+  }
+}
