@@ -4,7 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
-import net.monoamin.portalpower.blockentities.PortalControllerBlockEntity;
+import net.monoamin.portalpower.blockentities.ResonatorCoreBlockEntity;
 
 import java.util.function.Supplier;
 
@@ -26,7 +26,7 @@ public class CustomTogglePacket {
     public static void handle(CustomTogglePacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
-            if (player != null && player.level().getBlockEntity(msg.pos) instanceof PortalControllerBlockEntity blockEntity) {
+            if (player != null && player.level().getBlockEntity(msg.pos) instanceof ResonatorCoreBlockEntity blockEntity) {
                 blockEntity.toggle();  // Toggles the BlockEntity's state on/off
                 blockEntity.setChanged(); // Mark block entity as changed
             }

@@ -2,6 +2,7 @@
 
 package net.monoamin.portalpower.items;
 
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.monoamin.portalpower.blocks.ModBlocks;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
@@ -18,5 +19,9 @@ public class ModItems {
             () -> new LaserEmitterItem(ModBlocks.LASER_EMITTER.get()));
 
     public static final RegistryObject<Item> PORTAL_CONTROLLER_ITEM = ITEMS.register("resonator_core",
-            () -> new PortalControllerItem(ModBlocks.PORTAL_CONTROLLER.get()));
+            () -> new ResonatorCoreItem(ModBlocks.PORTAL_CONTROLLER.get()));
+
+    public static void register(IEventBus bus) {
+        ITEMS.register(bus);
+    }
 }

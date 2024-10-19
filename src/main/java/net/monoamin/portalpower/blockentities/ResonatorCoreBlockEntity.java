@@ -13,7 +13,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.monoamin.portalpower.BoundingBox;
@@ -21,22 +20,17 @@ import net.monoamin.portalpower.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.common.util.LazyOptional;
-import net.monoamin.portalpower.blocks.PortalControllerBlock;
+import net.monoamin.portalpower.blocks.ResonatorCoreBlock;
 import net.monoamin.portalpower.blocks.PortalFrameBlock;
 import net.monoamin.portalpower.menus.PortalControllerMenu;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PortalControllerBlockEntity extends BlockEntity implements MenuProvider {
-    private final EnergyStorage energyStorage;
-    private final LazyOptional<IEnergyStorage> energyCapability;
+public class ResonatorCoreBlockEntity extends BlockEntity implements MenuProvider {
+
     private boolean isOn = false;
     private static int ticks = 0;
     private static final int INPUT_SLOT = 0;
@@ -47,14 +41,14 @@ public class PortalControllerBlockEntity extends BlockEntity implements MenuProv
     public int displayEnergyLevel = 0;
     public int displayMaxEnergyLevel = 100;
 
-    public PortalControllerBlockEntity(BlockPos pos, BlockState state) {
+    public ResonatorCoreBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.PORTAL_CONTROLLER.get(), pos, state);
         this.data = new ContainerData() {
             @Override
             public int get(int p_39284_) {
                 return switch (p_39284_) {
-                    case 0 -> PortalControllerBlockEntity.this.displayEnergyLevel;
-                    case 1 -> PortalControllerBlockEntity.this.displayMaxEnergyLevel;
+                    case 0 -> ResonatorCoreBlockEntity.this.displayEnergyLevel;
+                    case 1 -> ResonatorCoreBlockEntity.this.displayMaxEnergyLevel;
                     default -> 0;
                 };
             }
@@ -62,8 +56,8 @@ public class PortalControllerBlockEntity extends BlockEntity implements MenuProv
             @Override
             public void set(int p_39285_, int p_39286_) {
                 switch (p_39285_) {
-                    case 0 -> PortalControllerBlockEntity.this.displayEnergyLevel = p_39286_;
-                    case 1 -> PortalControllerBlockEntity.this.displayMaxEnergyLevel = p_39286_;
+                    case 0 -> ResonatorCoreBlockEntity.this.displayEnergyLevel = p_39286_;
+                    case 1 -> ResonatorCoreBlockEntity.this.displayMaxEnergyLevel = p_39286_;
                 }
             }
 
@@ -74,19 +68,6 @@ public class PortalControllerBlockEntity extends BlockEntity implements MenuProv
         };
 
 
-        this.energyStorage = new EnergyStorage(100000, 1000, 0, 0);
-        this.energyCapability = LazyOptional.of(() -> energyStorage);
-    }
-
-    @Override
-    public <T> @NotNull LazyOptional<T> getCapability(Capability<T> cap, @Nullable net.minecraft.core.Direction side) {
-        if (cap == ForgeCapabilities.ENERGY) {
-            return energyCapability.cast();
-        }
-        if(cap == ForgeCapabilities.ITEM_HANDLER) {
-            return lazyItemHandler.cast();
-        }
-        return super.getCapability(cap, side);
     }
 
     @Override
@@ -98,7 +79,6 @@ public class PortalControllerBlockEntity extends BlockEntity implements MenuProv
     @Override
     public void invalidateCaps() {
         super.invalidateCaps();
-        energyCapability.invalidate();
         lazyItemHandler.invalidate();
     }
 
@@ -123,8 +103,6 @@ public class PortalControllerBlockEntity extends BlockEntity implements MenuProv
         super.saveAdditional(pTag);
         pTag.putBoolean("block.portalpower.resonator_core_block.ison", isOn);
         pTag.put("block.portalpower.resonator_core_block.inventory", itemHandler.serializeNBT());
-        pTag.putInt("block.portalpower.resonator_core_block.energystored", energyStorage.getEnergyStored());
-        pTag.putInt("block.portalpower.resonator_core_block.maxenergystored", energyStorage.getMaxEnergyStored());
     }
 
     @Override
@@ -160,34 +138,13 @@ public class PortalControllerBlockEntity extends BlockEntity implements MenuProv
         return new PortalControllerMenu(id, playerInventory, this, this.data);
     }
 
-    public static void tick(Level level, BlockPos pos, BlockState state, PortalControllerBlockEntity blockEntity) {
+    public static void tick(Level level, BlockPos pos, BlockState state, ResonatorCoreBlockEntity blockEntity) {
         if (level == null || level.isClientSide()) {
             return;
         }
-        blockEntity.displayEnergyLevel = blockEntity.energyStorage.getEnergyStored();
-        blockEntity.displayMaxEnergyLevel = blockEntity.energyStorage.getMaxEnergyStored();
-        blockEntity.energyStorage.extractEnergy(10,false);
 
         // Every 1 seconds
         if (ticks == 20) {
-
-            // Calculate required energy based on portal frame
-            int requiredEnergy = blockEntity.calculateRequiredEnergy();
-
-            if (blockEntity.energyStorage.getEnergyStored() >= requiredEnergy && !blockEntity.isOn) {
-                blockEntity.activatePortal();
-                blockEntity.energyStorage.extractEnergy(requiredEnergy, false);
-                blockEntity.isOn = true;
-                blockEntity.setChanged(); // Notify the game that the block state has changed
-            } else if (blockEntity.isOn) {
-                // Re-validate the portal frame in case it was altered
-                PortalFrameInfo frameInfo = blockEntity.scanPortalFrame();
-                if (frameInfo == null || blockEntity.energyStorage.getEnergyStored() < requiredEnergy) {
-                    blockEntity.deactivatePortal();
-                    blockEntity.isOn = false;
-                    blockEntity.setChanged(); // Notify the game that the block state has changed
-                }
-            }
             ticks = 0;
         }
         else {
@@ -278,7 +235,7 @@ public class PortalControllerBlockEntity extends BlockEntity implements MenuProv
         while (!queue.isEmpty()) {
             BlockPos current = queue.remove(0);
             BlockState state = level.getBlockState(current);
-            boolean a = state == PortalControllerBlock.stateById(0);
+            boolean a = state == ResonatorCoreBlock.stateById(0);
             boolean b = state == PortalFrameBlock.stateById(0);
             boolean c = Util.isInPlane(current, plane, startPos);
 
@@ -384,14 +341,6 @@ public class PortalControllerBlockEntity extends BlockEntity implements MenuProv
         // Define energy requirement, e.g., 1000 FE per block of frame
         int frameSize = 2 * (width + height); // Perimeter
         return frameSize * 1000;
-    }
-
-    public int getEnergyStored(){
-        return energyStorage.getEnergyStored();
-    }
-
-    public int getMaxEnergyStored(){
-        return energyStorage.getMaxEnergyStored();
     }
 
     public void setEnergyStored(int value){

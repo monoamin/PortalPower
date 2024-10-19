@@ -14,40 +14,18 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import net.monoamin.portalpower.blockentities.ModBlockEntities;
+import net.monoamin.portalpower.blockentities.renderers.ModBlockEntityRenderers;
 import net.monoamin.portalpower.blocks.ModBlocks;
 import net.monoamin.portalpower.items.ModItems;
 import net.monoamin.portalpower.menus.ModMenus;
+import net.monoamin.portalpower.network.ModMessages;
 import net.monoamin.portalpower.screens.ModScreens;
 
 @Mod(PortalPower.MODID)
 public class PortalPower {
     public static final String MODID = "portalpower";
-    public static final boolean DEBUG = true;
-
-    /*
-    // Create a DeferredRegister for blocks and items
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
-    */
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, PortalPower.MODID);
-/*
-    // Register Blocks
-    public static final RegistryObject<Block> LASER_BLOCK = BLOCKS.register("laser_block",
-            () -> new ResonatorCoreBlock(BlockBehaviour.Properties.of().strength(1.0f).requiresCorrectToolForDrops().sound(SoundType.METAL)));
-    public static final RegistryObject<Block> PORTAL_FRAME_BLOCK = BLOCKS.register("portal_frame",
-            () -> new PortalFrameBlock(BlockBehaviour.Properties.of().strength(1.0f).requiresCorrectToolForDrops().sound(SoundType.AMETHYST)));
-    public static final RegistryObject<Block> PORTAL_CONTROLLER_BLOCK = BLOCKS.register("resonator_core",
-            () -> new PortalControllerBlock(BlockBehaviour.Properties.of().strength(1.0f).requiresCorrectToolForDrops().sound(SoundType.AMETHYST)));
 
-    // Register Items
-    public static final RegistryObject<Item> LASER_BLOCK_ITEM = ITEMS.register("laser_block",
-            () -> new BlockItem(LASER_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> PORTAL_FRAME_ITEM = ITEMS.register("portal_frame",
-            () -> new BlockItem(PORTAL_FRAME_BLOCK.get(), new Item.Properties()));
-    public static final RegistryObject<Item> PORTAL_CONTROLLER_ITEM = ITEMS.register("resonator_core",
-            () -> new BlockItem(PORTAL_CONTROLLER_BLOCK.get(), new Item.Properties()));
-
-*/
     // Register Creative Tab
     public static final RegistryObject<CreativeModeTab> PORTAL_POWER_CREATIVETAB = CREATIVE_MODE_TABS.register("portalpower", () ->
             CreativeModeTab.builder()
@@ -62,15 +40,16 @@ public class PortalPower {
                     .build()
     );
 
-
     public PortalPower() {
         PortalPowerConfig.register();
         MinecraftForge.EVENT_BUS.register(this);
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        ModBlocks.BLOCKS.register(modEventBus);
-        ModItems.ITEMS.register(modEventBus);
+
+        ModBlocks.register(modEventBus);
+        ModItems.register(modEventBus);
         ModBlockEntities.register(modEventBus);
         ModMenus.register(modEventBus);
+
         CREATIVE_MODE_TABS.register(modEventBus);
     }
 
@@ -79,6 +58,7 @@ public class PortalPower {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
             event.enqueueWork(ModScreens::registerScreens);
+            event.enqueueWork(ModBlockEntityRenderers::registerBlockEntityRenderers);
         }
     }
 
@@ -87,7 +67,7 @@ public class PortalPower {
 
         @SubscribeEvent
         public static void onCommonSetup(FMLCommonSetupEvent event) {
-            event.enqueueWork(ModNetworkHandler::register);
+            event.enqueueWork(ModMessages::register);
         }
     }
 }

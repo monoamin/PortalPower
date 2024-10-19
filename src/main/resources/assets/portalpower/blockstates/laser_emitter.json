@@ -1,7 +1,20 @@
 {
   "variants": {
-    "": {
-      "model": "portalpower:block/laser_emitter"
+    "facing=north": {
+      "model": "portalpower:block/laser_emitter",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "portalpower:block/laser_emitter",
+      "y": 0
+    },
+    "facing=south": {
+      "model": "portalpower:block/laser_emitter",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "portalpower:block/laser_emitter",
+      "y": 180
     },
     "inventory": {
       "model": "portalpower:block/laser_emitter"

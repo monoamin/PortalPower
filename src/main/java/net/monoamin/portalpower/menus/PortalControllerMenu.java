@@ -9,8 +9,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.SlotItemHandler;
+import net.monoamin.portalpower.blockentities.ResonatorCoreBlockEntity;
 import net.monoamin.portalpower.blocks.ModBlocks;
-import net.monoamin.portalpower.blockentities.PortalControllerBlockEntity;
 
 public class PortalControllerMenu extends AbstractContainerMenu {
     public final BlockEntity blockEntity;
@@ -21,8 +21,6 @@ public class PortalControllerMenu extends AbstractContainerMenu {
         @Override
         public int get(int index) {
             switch (index) {
-                case CUR_ENERGY: return ((PortalControllerBlockEntity)blockEntity).getEnergyStored();
-                case MAX_ENERGY: return ((PortalControllerBlockEntity)blockEntity).getMaxEnergyStored();
                 default: return CUR_ENERGY;
             }
         }
@@ -30,8 +28,8 @@ public class PortalControllerMenu extends AbstractContainerMenu {
         @Override
         public void set(int index, int value) {
             // This should only be called on the client
-            if (index == CUR_ENERGY) ((PortalControllerBlockEntity)blockEntity).displayEnergyLevel = value;
-            if (index == MAX_ENERGY) ((PortalControllerBlockEntity)blockEntity).displayMaxEnergyLevel = value;
+            if (index == CUR_ENERGY) ((ResonatorCoreBlockEntity)blockEntity).displayEnergyLevel = value;
+            if (index == MAX_ENERGY) ((ResonatorCoreBlockEntity)blockEntity).displayMaxEnergyLevel = value;
         }
 
         @Override
@@ -46,7 +44,7 @@ public class PortalControllerMenu extends AbstractContainerMenu {
     public PortalControllerMenu(int id, Inventory playerInventory, BlockEntity blockEntity, ContainerData data) {
         super(ModMenus.PORTAL_CONTROLLER_MENU.get(), id);
         checkContainerSize(playerInventory, 1);
-        this.blockEntity = (PortalControllerBlockEntity) blockEntity;
+        this.blockEntity = (ResonatorCoreBlockEntity) blockEntity;
         this.level = playerInventory.player.level();
 
         addPlayerInventory(playerInventory);
@@ -60,19 +58,19 @@ public class PortalControllerMenu extends AbstractContainerMenu {
         this.addDataSlot(new DataSlot() {
             @Override
             public int get() {
-                return ((PortalControllerBlockEntity)blockEntity).displayEnergyLevel;
+                return ((ResonatorCoreBlockEntity)blockEntity).displayEnergyLevel;
             }
 
             @Override
             public void set(int value) {
-                ((PortalControllerBlockEntity)blockEntity).displayEnergyLevel = value;
+                ((ResonatorCoreBlockEntity)blockEntity).displayEnergyLevel = value;
             }
         });
     }
 
     // Constructor for use on the client (using FriendlyByteBuf)
     public PortalControllerMenu(int id, Inventory playerInventory, FriendlyByteBuf extraData) {
-        this(id, playerInventory, (PortalControllerBlockEntity) playerInventory.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(1));
+        this(id, playerInventory, (ResonatorCoreBlockEntity) playerInventory.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(1));
     }
 
     public boolean isOn() {
@@ -153,18 +151,6 @@ public class PortalControllerMenu extends AbstractContainerMenu {
     @Override
     public void broadcastChanges(){
         super.broadcastChanges();
-        this.setDataSlot(new DataSlot()
-        {
-            @Override
-            public int get() {
-                return ((PortalControllerBlockEntity)blockEntity).getEnergyStored();
-            }
-
-            @Override
-            public void set(int p_39402_) {
-                ((PortalControllerBlockEntity)blockEntity).setEnergyStored(p_39402_);
-            }
-        });
     }
 
     private void setDataSlot(DataSlot dataSlot) {
