@@ -1,7 +1,6 @@
 package net.monoamin.portalpower.blockentities;
 
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.monoamin.portalpower.blocks.ModBlocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -16,7 +15,7 @@ public class ModBlockEntities {
             () -> BlockEntityType.Builder.of(PortalFrameBlockEntity::new, ModBlocks.PORTAL_FRAME.get(), Blocks.OBSIDIAN).build(null));
 
     public static final RegistryObject<BlockEntityType<ResonatorCoreBlockEntity>> PORTAL_CONTROLLER = BLOCK_ENTITIES.register("resonator_core",
-            () -> BlockEntityType.Builder.of(ResonatorCoreBlockEntity::new, ModBlocks.PORTAL_CONTROLLER.get()).build(null));
+            () -> BlockEntityType.Builder.of(ResonatorCoreBlockEntity::new, ModBlocks.RESONATOR_CORE.get()).build(null));
 
     public static final RegistryObject<BlockEntityType<LaserEmitterBlockEntity>> LASER_EMITTER = BLOCK_ENTITIES.register("laser_emitter",
             () -> BlockEntityType.Builder.of(LaserEmitterBlockEntity::new, ModBlocks.LASER_EMITTER.get()).build(null));

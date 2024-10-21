@@ -9,8 +9,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -19,7 +17,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.monoamin.portalpower.blocks.ResonatorCoreBlock;
+import net.monoamin.portalpower.blocks.ModBlocks;
 import net.monoamin.portalpower.network.ModMessages;
 import net.monoamin.portalpower.network.packet.LaserEmitterSyncPacket;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +30,7 @@ public class LaserEmitterBlockEntity extends BlockEntity {
     private final LazyOptional<IEnergyStorage> energyCapability;
     private int currentEnergyLevel;
     private int maxEnergyLevel;
-    private int activeEnergyUsePerTick = 10;
+    private int activeEnergyUsePerTick = 1000;
 
     private boolean isActive;
     private static final float[] BASE_TINT = new float[] { 0.5f, 0.5f, 1.0f };
@@ -70,7 +68,7 @@ public class LaserEmitterBlockEntity extends BlockEntity {
 
     public LaserEmitterBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.LASER_EMITTER.get(), pos, state);
-        this.energyStorage = new EnergyStorage(10000, 100, 0, 0);
+        this.energyStorage = new EnergyStorage(10000, 1000, 0, 0);
         this.energyCapability = LazyOptional.of(() -> energyStorage);
     }
 
@@ -82,22 +80,42 @@ public class LaserEmitterBlockEntity extends BlockEntity {
         return super.getCapability(cap, side);
     }
 
+
     public static void serverTick(Level level, BlockPos pos, BlockState state, LaserEmitterBlockEntity be) {
         // Server-side logic
         be.currentEnergyLevel = be.energyStorage.getEnergyStored();
         be.maxEnergyLevel = be.energyStorage.getMaxEnergyStored();
-        if (be.currentEnergyLevel >= be.activeEnergyUsePerTick && !be.isActive) {
+
+        if (be.currentEnergyLevel >= be.activeEnergyUsePerTick) {
+            if (!be.isActive) {
+                be.isActive = true;
+                be.setChanged(); // Notify the game that the block state has changed
+                level.sendBlockUpdated(pos, state, state, 3); // Synchronize with client
+                be.syncWithClient(); // Send synchronization packet to client
+            }
             be.energyStorage.extractEnergy(be.activeEnergyUsePerTick, false);
-            be.isActive = true;
-            be.setChanged(); // Notify the game that the block state has changed
-            level.sendBlockUpdated(pos, state, state, 3); // Synchronize with client
-            be.syncWithClient(); // Send synchronization packet to client
+        } else {
+            if (be.isActive) {
+                be.isActive = false;
+                be.setChanged();
+                level.sendBlockUpdated(pos, state, state, 3);
+                be.syncWithClient();
+            }
         }
     }
 
+    private static int tickCounter = 0;
     public static void clientTick(Level level, BlockPos pos, BlockState state, LaserEmitterBlockEntity blockEntity) {
         // Client-side logic (like beam rendering)
-        updateBeamSections((ClientLevel) level, pos, state, blockEntity);
+//        updateBeamSections((ClientLevel) level, pos, state, blockEntity);
+        if (tickCounter == 20) {
+            Direction facing = blockEntity.getBlockState().getValue(BlockStateProperties.FACING);
+            blockEntity.updateBeamSectionsForDirection(facing);
+            tickCounter = 0;
+        }
+        else{
+            tickCounter++;
+        }
     }
 
     private static void updateBeamSections(ClientLevel level, BlockPos pos, BlockState state, LaserEmitterBlockEntity laserEmitterBlockEntity) {
@@ -212,6 +230,10 @@ public class LaserEmitterBlockEntity extends BlockEntity {
 
     // Update beam sections based on the direction the block is facing and stop when hitting a block
     private void updateBeamSectionsForDirection(Direction facing) {
+        if (!this.isActive) {
+            return; // Ensure beam sections are only updated if the laser is active
+        }
+
         this.beamSections.clear();
         BlockPos currentPos = this.worldPosition;
         Level level = this.getLevel();
@@ -222,8 +244,8 @@ public class LaserEmitterBlockEntity extends BlockEntity {
             currentPos = currentPos.relative(facing);
             BlockState blockCurrentPos = level.getBlockState(currentPos);
             if (level == null) break;
-            if (blockCurrentPos != Blocks.AIR.defaultBlockState()) {
-                if (blockCurrentPos == ResonatorCoreBlock.stateById(0)){
+            if (blockCurrentPos.isSolidRender(level, currentPos)) {
+                if (blockCurrentPos.getBlock().equals(ModBlocks.RESONATOR_CORE.get())){
                     // do something with resonant core
                     break;
                 }

@@ -29,7 +29,7 @@ public class PortalPower {
     // Register Creative Tab
     public static final RegistryObject<CreativeModeTab> PORTAL_POWER_CREATIVETAB = CREATIVE_MODE_TABS.register("portalpower", () ->
             CreativeModeTab.builder()
-                    .icon(() -> new ItemStack(ModBlocks.PORTAL_CONTROLLER.get()))  // Set an icon for the tab
+                    .icon(() -> new ItemStack(ModBlocks.RESONATOR_CORE.get()))  // Set an icon for the tab
                     .title(Component.translatable("itemGroup.portalpower"))   // Tab name translation
                     .displayItems((parameters, output) -> {
                         // Add the block to the tab

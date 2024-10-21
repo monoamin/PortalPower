@@ -47,15 +47,11 @@ public class LaserEmitterBlock extends Block implements EntityBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        // Get the direction the player is facing
-        Direction direction = context.getNearestLookingDirection();
-        // Make sure the block faces the player unless they are placing it up/down
-        if (direction.getAxis().isVertical()) {
-            direction = context.getHorizontalDirection().getOpposite(); // Face opposite to player for horizontal directions
-        }
+        // Get the horizontal direction the player is facing
+        Direction direction = context.getHorizontalDirection(); // Face player for horizontal directions
         return this.defaultBlockState()
                 .setValue(FACING, direction)  // Set the block's facing direction
-                .setValue(ACTIVE, false); // Default to inactive
+                .setValue(ACTIVE, false);     // Default to inactive
     }
 
     // This method is responsible for updating the block state when needed

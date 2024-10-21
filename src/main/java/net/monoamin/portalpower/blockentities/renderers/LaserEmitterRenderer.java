@@ -49,10 +49,10 @@ public class LaserEmitterRenderer implements BlockEntityRenderer<LaserEmitterBlo
 
     private static float getRotationYFromFacing(Direction facing) {
         return switch (facing) {
-            case NORTH -> 180.0F;
-            case SOUTH -> 0.0F;
-            case WEST -> 90.0F;
+            case NORTH -> 0.0F;
             case EAST -> 270.0F;
+            case SOUTH -> 180.0F;
+            case WEST -> 90.0F;
             default -> 0.0F;
         };
     }
@@ -68,7 +68,7 @@ public class LaserEmitterRenderer implements BlockEntityRenderer<LaserEmitterBlo
     private static void renderBeaconBeam(PoseStack poseStack, MultiBufferSource bufferSource, float maybePartialTick,
                                          long time, int totalHeight, int height, float[] tint, float rotationY, float rotationX) {
         renderBeaconBeam(poseStack, bufferSource, BEAM_LOCATION, maybePartialTick, 1.0F, time, totalHeight, height,
-                tint, 0.2F, 0.25F, rotationY, rotationX);
+                tint, 0.1F, 0.15F, rotationY, rotationX);
     }
 
     public static void renderBeaconBeam(PoseStack poseStack, MultiBufferSource bufferSource, ResourceLocation beamImageLocation,

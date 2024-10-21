@@ -131,7 +131,7 @@ public class PortalControllerMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player player) {
         return stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()),
-                player, ModBlocks.PORTAL_CONTROLLER.get());
+                player, ModBlocks.RESONATOR_CORE.get());
     }
 
     private void addPlayerInventory(Inventory playerInventory) {

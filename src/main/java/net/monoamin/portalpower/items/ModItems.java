@@ -19,7 +19,7 @@ public class ModItems {
             () -> new LaserEmitterItem(ModBlocks.LASER_EMITTER.get()));
 
     public static final RegistryObject<Item> PORTAL_CONTROLLER_ITEM = ITEMS.register("resonator_core",
-            () -> new ResonatorCoreItem(ModBlocks.PORTAL_CONTROLLER.get()));
+            () -> new ResonatorCoreItem(ModBlocks.RESONATOR_CORE.get()));
 
     public static void register(IEventBus bus) {
         ITEMS.register(bus);
